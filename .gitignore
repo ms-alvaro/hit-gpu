@@ -1,1 +1,15 @@
+# Build artifacts
+*.o
+src/*.o
+tools/*.o
+hitMPI
+biggerbox.bin
 
+# Run directories (contain large data: planes.bin, *.h5)
+run_*/
+run_debug/
+
+# Backups / scratch
+*.bak
+run.conf.*bak
+*.out

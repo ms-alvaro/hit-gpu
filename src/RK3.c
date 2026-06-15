@@ -311,6 +311,11 @@ START_RANGE("imposeSymetry",5)
 END_RANGE	
 	counter++;
 	time_elapsed+=dt;
+
+	/* Save y-z plane if configured */
+	if (config->save_plane_every > 0 && counter % config->save_plane_every == 0) {
+	    save_plane_step(u, time_elapsed);
+	}
 END_RANGE
 timer = MPI_Wtime()-timer;
 	if(RANK==0 /*&& counter%10==0*/){

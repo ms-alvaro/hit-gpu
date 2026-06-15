@@ -3,7 +3,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
-#include <cublas.h>
+//#include <cublas.h>  // old API removed — see hit_cuda_mpi.c for v2 handle
 #include <cufft.h>
 
 extern int pipe_xfer;
@@ -121,6 +121,11 @@ typedef struct case_config_t {
   char *writeU;
   char *writeV;
   char *writeW;
+  int save_plane_every;
+  char *planefile;
+  float sweep_period;   /* HIT-time period for swept-plane extraction;
+                           0 => fixed x=0 plane (legacy).
+                           x_s/Lx = mod(t/sweep_period, 1) */
 } case_config_t;
 
 
@@ -312,6 +317,11 @@ extern void imposeSymetry(vectorField t);
 
 //Routine check
 extern void routineCheck(vectorField t);
+
+// Plane saving
+void save_planes_init(const char* filename, float sweep_period);
+void save_plane_step(vectorField u, float time);
+void save_planes_finalize(void);
 
 //Statistics Kernels
 extern void calc_E_kernel( vectorField u, float2* t);
