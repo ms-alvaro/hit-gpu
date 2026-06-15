@@ -92,7 +92,7 @@ static __global__ void calcDkernel(float2* ux,float2* uy,float2* uz,float2* t,fl
 	float k3;
 
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	

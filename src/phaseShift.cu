@@ -14,7 +14,7 @@ static __global__ void shift_kernel(float2* tx,float2* ty,float2* tz,float Delta
 	float k1,k2,k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;

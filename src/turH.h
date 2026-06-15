@@ -129,10 +129,16 @@ typedef struct case_config_t {
 } case_config_t;
 
 
-//ONLY FOR NY=NX
+// Non-cubic box: streamwise (x) is LONGX times longer than spanwise so the
+// swept inflow decorrelates within one box pass (kills streamwise periodicity).
+// Physical box: Lx = LONGX*2*pi, Ly = Lz = 2*pi  =>  dx = dy = dz (LONGX*NSS
+// points in x).  x-wavenumbers scale by KXFAC = 1/LONGX so kx = (2*pi/Lx)*m.
+// LONGX=1 reproduces the original cubic box exactly.
+#define LONGX 4
+#define KXFAC (1.0f/(float)LONGX)
 
-static const int N =NSS;
-static const int NX=NSS;
+static const int N =NSS;          // spanwise/wall-normal resolution (sets Re, kmax)
+static const int NX=LONGX*NSS;    // streamwise (sweep) — longer box
 static const int NY=NSS;
 static const int NZ=NSS/2+1;
 

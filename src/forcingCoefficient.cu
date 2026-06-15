@@ -304,7 +304,7 @@ static __global__ void calcEnergyShellKernel2(float2* ux,float2* uy,float2* uz,f
     if(tx==0) i = NXSIZE - 1;
     if(ty==0) j = NY - 1;
     int ig = i + IGLOBAL;
-    float k1=(ig)<NX/2 ? (float)(ig) : (float)(ig)-(float)NX ;
+    float k1=((ig)<NX/2 ? (float)(ig) : (float)(ig)-(float)NX) * KXFAC ;
     float k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
     float k3=(float)k;
     float kk=k1*k1+k2*k2+k3*k3;
@@ -367,7 +367,7 @@ static __global__ void calcEnergyShellKernel(float2* ux,float2* uy,float2* uz,fl
 	{
 
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;

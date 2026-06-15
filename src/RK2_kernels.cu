@@ -39,7 +39,7 @@ static void __global__ rk_substep_1(float2* ux,float2* uy,float2* uz,float2* u_w
 
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -143,7 +143,7 @@ static void __global__ rk_substep_05(float2* ux,float2* uy,float2* uz,float2* u_
 
 	
 	// X indices in global		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -226,7 +226,7 @@ static void __global__ rk_substep_2(float2* ux,float2* uy,float2* uz,float2* rx,
 	{
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
