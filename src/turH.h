@@ -136,6 +136,9 @@ typedef struct case_config_t {
 // LONGX=1 reproduces the original cubic box exactly.
 #define LONGX 4
 #define KXFAC (1.0f/(float)LONGX)
+// Total real-space grid size = FFT normalization. Real z-size is 2*NZ-2 = N.
+// For LONGX=1 this is N*N*N (original cubic).
+#define NTOT ((float)NX*(float)NY*(float)N)
 
 static const int N =NSS;          // spanwise/wall-normal resolution (sets Re, kmax)
 static const int NX=LONGX*NSS;    // streamwise (sweep) — longer box
