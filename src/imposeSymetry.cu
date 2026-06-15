@@ -11,8 +11,8 @@ static __global__ void normalize_kernel(float2* t1,float2* t2,float2* t3,int IGL
 	{
 
 	
-	float N3=(float)N*(float)N*(float)N;	
-	
+	float N3=NTOT;
+
 	t1[h].x/=N3;
 	t2[h].x/=N3;
 	t3[h].x/=N3;

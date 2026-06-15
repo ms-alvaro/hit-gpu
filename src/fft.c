@@ -45,9 +45,14 @@ void fftSetup(void)
 	cufftCheck(cufftPlanMany( &fft2_r2c,2,n2,NULL,1,0,NULL,1,0,CUFFT_R2C,NXSIZE/n_steps),"ALLOCATE_FFT2_R2C");
 	cufftCheck(cufftPlanMany( &fft2_c2r,2,n2,NULL,1,0,NULL,1,0,CUFFT_C2R,NXSIZE/n_steps),"ALLOCATE_FFT2_C2R");
 
-	//1D fourier transforms
-
-	cufftCheck(cufftPlanMany(&fft1_c2c,1,n1,NULL,1,0,NULL,1,0,CUFFT_C2C,NYSIZE*NZ/n_steps),"ALLOCATE_FFT1_R2C");
+	//1D fourier transform along X, done IN-PLACE with a strided layout on
+	//the [x,ky,kz] buffer (index = x*NY*NZ + ky*NZ + kz).  For each (ky,kz)
+	//the NX x-samples sit at stride NY*NZ; there are NY*NZ such lines.
+	//This avoids the device<->host transpose entirely (single-GPU).
+	cufftCheck(cufftPlanMany(&fft1_c2c,1,n1,
+	                         n1,NY*NZ,1,        /* inembed, istride, idist */
+	                         n1,NY*NZ,1,        /* onembed, ostride, odist */
+	                         CUFFT_C2C,NY*NZ),"ALLOCATE_FFT1_C2C");
 
 
 
@@ -117,34 +122,17 @@ void fftForward(float2* buffer_1)
 {
 
 
-	//NX transformadas en 2D 	
+	//2D (y,z) R2C for each x-slab: [x,y,z] -> [x,ky,kz]
 
-	for(int i=0;i<n_steps;i++){	
+	for(int i=0;i<n_steps;i++){
 
 	cufftCheck(cufftExecR2C(fft2_r2c,(float*)(buffer_1)+i*2*NY*NZ*NXSIZE/n_steps,buffer_1+i*NY*NZ*NXSIZE/n_steps),"forward transform");
 
-	}	
-
-	
-	//Transpose
-
-	transposeForward(buffer_1);
-	
-
-	//Transformada 1D NY*NZ
-
-	
-	for(int i=0;i<n_steps;i++){	
-
-	cufftCheck(cufftExecC2C(fft1_c2c,buffer_1+i*NY*NZ*NXSIZE/n_steps,buffer_1+i*NY*NZ*NXSIZE/n_steps,CUFFT_FORWARD),"forward transform");	
-
 	}
-	
 
-	//Transpose
+	//1D C2C along x, strided in-place: [x,ky,kz] -> [kx,ky,kz]
 
-	transposeBackward(buffer_1);
-		
+	cufftCheck(cufftExecC2C(fft1_c2c,buffer_1,buffer_1,CUFFT_FORWARD),"forward transform x");
 
 	return;
 }
@@ -153,32 +141,20 @@ void fftForward(float2* buffer_1)
 void fftBackward(float2* buffer_1)
 {
 
-	//Transpose
+	//1D C2C inverse along x, strided in-place: [kx,ky,kz] -> [x,ky,kz]
 
-	transposeForward(buffer_1);
+	cufftCheck(cufftExecC2C(fft1_c2c,buffer_1,buffer_1,CUFFT_INVERSE),"backward transform x");
 
-	//NY*NZ transformadas 1D en X
-		
-	for(int i=0;i<n_steps;i++){	
+	//2D (ky,kz) C2R for each x-slab: [x,ky,kz] -> [x,y,z]
 
-	cufftCheck(cufftExecC2C(fft1_c2c,buffer_1+i*NY*NZ*NXSIZE/n_steps,buffer_1+i*NY*NZ*NXSIZE/n_steps,CUFFT_INVERSE),"forward transform");	
+	for(int i=0;i<n_steps;i++){
+
+	cufftCheck(cufftExecC2R(fft2_c2r,buffer_1+i*NY*NZ*NXSIZE/n_steps,(float*)(buffer_1)+i*2*NY*NZ*NXSIZE/n_steps),"backward transform");
 
 	}
 
-	//Transpose
 
-	transposeBackward(buffer_1);
-
-	//NX transformadas en 2D 
-
-	for(int i=0;i<n_steps;i++){	
-
-	cufftCheck(cufftExecC2R(fft2_c2r,buffer_1+i*NY*NZ*NXSIZE/n_steps,(float*)(buffer_1)+i*2*NY*NZ*NXSIZE/n_steps),"forward transform");
-	
-	}
-
-
-	return;	
+	return;
 
 }
 
