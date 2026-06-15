@@ -30,7 +30,7 @@ static void __global__ rk_step_1(float2* ux,float2* uy,float2* uz,float2* u_wx,f
 	{
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -138,7 +138,7 @@ static void __global__ rk_step_2(float2* ux,float2* uy,float2* uz,float2* u_wx,f
 	{
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;

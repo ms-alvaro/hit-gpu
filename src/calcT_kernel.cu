@@ -168,7 +168,7 @@ static __global__ void calcSii_kernel(float2* ux,float2* uy,float2* uz,int IGLOB
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -232,7 +232,7 @@ static __global__ void calcSij_kernel(float2* ux,float2* uy,float2* uz,int IGLOB
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -294,7 +294,7 @@ static __global__ void calc_dTau_kernel(float2* ux,float2* uy,float2* uz,int mod
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -382,7 +382,7 @@ static __global__ void gaussFilter_kernel(float2* uxx,float2* uyy,float2* uzz,fl
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -444,7 +444,7 @@ static __global__ void gaussFilter_High_kernel(float2* uxx,float2* uyy,float2* u
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -507,7 +507,7 @@ static __global__ void calcL_kernel(float2* A1,float2* A2,float2* A3,float2* B1,
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
@@ -571,7 +571,7 @@ static __global__ void calc_tauS_kernel(float2* OUT,float2* Ax,float2* Ay,float2
 	float k3;
 	
 	// X indices		
-	k1=(i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX ;
+	k1=((i+IGLOBAL)<NX/2 ? (float)(i+IGLOBAL) : (float)(i+IGLOBAL)-(float)NX) * KXFAC ;
 
 	// Y indice
 	k2=j<NY/2 ? (float)j : (float)j-(float)NY ;
