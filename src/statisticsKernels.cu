@@ -12,7 +12,7 @@ static __global__ void calcEkernel(float2* ux,float2* uy,float2* uz,float2* t,in
         int  j = ind/NZ-i*NY;
 
 	
-	float N3=(float)N*(float)N*(float)N;
+	float N3=NTOT;
 
 	int h=i*NY*NZ+j*NZ+k;
 
@@ -73,7 +73,7 @@ static __global__ void calcDkernel(float2* ux,float2* uy,float2* uz,float2* t,fl
         int  i = ind/(NZ*NY);
         int  j = ind/NZ-i*NY;
 	
-	float N3=(float)N*(float)N*(float)N;
+	float N3=NTOT;
 
 	int h=i*NY*NZ+j*NZ+k;
 
