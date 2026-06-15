@@ -11,7 +11,7 @@ static __global__ void convolution_rotor(float2* wx,float2* wy,float2* wz,float2
 	int k=j%NZ;
 	j=(j-k)/NZ;
 
-	float N3=(float) N*N*N;
+	float N3=NTOT;   // FFT normalization = NX*NY*N (non-cubic aware)
 
 	float2 m1;
 	float2 m2;

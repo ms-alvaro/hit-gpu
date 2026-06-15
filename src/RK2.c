@@ -74,7 +74,7 @@ static float calcDt(vectorField uw,vectorField u, case_config_t *config){
 	float dtf=0.0f;
 	float dtv=0.0f;	
 	
-	float N3=(float)N*(float)N*(float)N;
+	float N3=NTOT;
 	
 	float* umax=(float*)malloc(3*sizeof(float));
 	

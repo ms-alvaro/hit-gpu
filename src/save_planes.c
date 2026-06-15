@@ -182,7 +182,7 @@ static void validate_extraction(float2* component, float* extracted_plane)
     if (validated) return;
     validated = 1;
 
-    float N3 = (float)N * (float)N * (float)N;
+    float N3 = NTOT;   // FFT normalization = NX*NY*N (non-cubic aware)
     int z_stride = 2 * NZ;
     size_t fft_size = (size_t)NXSIZE * NY * NZ * sizeof(float2);
 
@@ -254,7 +254,7 @@ static void validate_sweep(float2* component)
     if (done) return;
     done = 1;
 
-    float N3 = (float)N * (float)N * (float)N;
+    float N3 = NTOT;   // FFT normalization = NX*NY*N (non-cubic aware)
     int z_stride = 2 * NZ;
     size_t fft_size = (size_t)NXSIZE * NY * NZ * sizeof(float2);
 
@@ -307,7 +307,7 @@ void save_plane_step(vectorField u, float time)
 {
     if (!plane_init || RANK != 0) return;
 
-    float N3 = (float)N * (float)N * (float)N;
+    float N3 = NTOT;   // FFT normalization = NX*NY*N (non-cubic aware)
     int z_stride = 2 * NZ;   /* N + 2 (C2R padding in z) */
 
     /* Temp CPU buffer for one real slab with z-padding */
