@@ -194,7 +194,18 @@ void starSimulation(void){
 	  (char *) config_setting_get_string(config_lookup(&config,"application.write.U")),
 	  (char *) config_setting_get_string(config_lookup(&config,"application.write.V")),
 	  (char *) config_setting_get_string(config_lookup(&config,"application.write.W")),
+	  0,    /* save_plane_every (default: disabled) */
+	  NULL, /* planefile */
+	  0.0f  /* sweep_period (default: 0 => fixed x=0 plane) */
 	};
+
+	/* Optional plane-saving config */
+	config_setting_t *spe = config_lookup(&config,"application.save_plane_every");
+	if (spe) case_config.save_plane_every = (int)config_setting_get_int(spe);
+	config_setting_t *pf = config_lookup(&config,"application.planefile");
+	if (pf) case_config.planefile = (char*)config_setting_get_string(pf);
+	config_setting_t *swp = config_lookup(&config,"application.sweep_period");
+	if (swp) case_config.sweep_period = (float)config_setting_get_float(swp);
 
 	//Size 
 		
@@ -247,11 +258,19 @@ void starSimulation(void){
 	//RK integration
 	
 
+	/* Initialize plane saving if configured */
+	if (case_config.save_plane_every > 0 && case_config.planefile) {
+	    save_planes_init(case_config.planefile, case_config.sweep_period);
+	}
+
 	float time = (float) config_setting_get_float(config_lookup(&config,"application.time"));
 
 	int counter=0;
-	
+
 	counter=RK3step(u,&time,&case_config);
+
+	/* Finalize plane saving */
+	save_planes_finalize();
 
 	int mpierr = MPI_Barrier(MPI_COMM_WORLD);
 

@@ -1,7 +1,10 @@
 #include "turH.h"
+#include <cublas_v2.h>
 
+static cublasHandle_t cublas_fft_handle;
+static int cublas_fft_init = 0;
 
-static cufftHandle fft2_r2c; 
+static cufftHandle fft2_r2c;
 static cufftHandle fft2_c2r; 
 static cufftHandle fft1_c2c; 
 
@@ -186,13 +189,15 @@ void calcUmax(vectorField t,float* ux,float* uy,float* uz)
 	int size_l=2*NXSIZE*NY*NZ;
 	int index;
 
-	index=cublasIsamax(size_l, (const float *)t.x, 1);
+	if(!cublas_fft_init){ cublasCreate(&cublas_fft_handle); cublas_fft_init=1; }
+
+	cublasIsamax(cublas_fft_handle, size_l, (const float *)t.x, 1, &index);
 	cudaCheck(cudaMemcpy(ux,(float*)t.x+index-1, sizeof(float), cudaMemcpyDeviceToHost),"caca");
 
-	index=cublasIsamax (size_l, (const float *)t.y, 1);
+	cublasIsamax(cublas_fft_handle, size_l, (const float *)t.y, 1, &index);
 	cudaCheck(cudaMemcpy(uy,(float*)t.y+index-1, sizeof(float), cudaMemcpyDeviceToHost),"caca");
-	
-	index=cublasIsamax (size_l, (const float *)t.z, 1);
+
+	cublasIsamax(cublas_fft_handle, size_l, (const float *)t.z, 1, &index);
 	cudaCheck(cudaMemcpy(uz,(float*)t.z+index-1, sizeof(float), cudaMemcpyDeviceToHost),"caca");
 
 	

@@ -1,0 +1,34 @@
+# Makefile for HIT_MPI on A100 (sm_80)
+# System: RHEL 8, system OpenMPI + g++, CUDA 12.4, conda HDF5 + libconfig
+
+CONDA_PREFIX = /home/alvaroms/anaconda3/envs/chgpu
+MPI_BIN = /usr/lib64/openmpi/bin
+
+CC  = $(MPI_BIN)/mpic++ -O3 -march=native -ffast-math
+NVCC = /usr/local/cuda/bin/nvcc -O3 -arch=compute_80 -code=sm_80
+LD  = $(MPI_BIN)/mpic++ -O3 -march=native
+
+LIBS = -lcudart -lcufft -lcublas -lcuda -lstdc++ -lm -lhdf5 -lhdf5_hl -lconfig
+PATHS = -L/usr/local/cuda/lib64 -L$(CONDA_PREFIX)/lib -L/usr/lib64 -Wl,-rpath,$(CONDA_PREFIX)/lib
+INCLUDES = -I/usr/local/cuda/include -I$(CONDA_PREFIX)/include -I/usr/include/openmpi-x86_64
+
+NSS := $(shell python3 stripNSS.py)
+RES := $(shell python3 stripRES.py)
+SIZE = -DNSS=$(NSS) -DRES=$(RES)
+
+GPU_SOURCES = $(wildcard src/*.cu)
+CPU_SOURCES = $(wildcard src/*.c)
+GPU_OBJECTS = $(GPU_SOURCES:.cu=.o)
+CPU_OBJECTS = $(CPU_SOURCES:.c=.o)
+
+all: $(GPU_OBJECTS) $(CPU_OBJECTS)
+	$(LD) -o hitMPI $(CPU_OBJECTS) $(GPU_OBJECTS) $(PATHS) $(LIBS)
+
+$(CPU_OBJECTS): src/%.o: src/%.c
+	$(CC) -c $(INCLUDES) $(SIZE) $< -o $@
+
+$(GPU_OBJECTS): src/%.o: src/%.cu
+	$(NVCC) -c $(INCLUDES) $(SIZE) $< -o $@
+
+clean:
+	rm -f src/*.o hitMPI
