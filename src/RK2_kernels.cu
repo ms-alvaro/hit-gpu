@@ -71,7 +71,7 @@ static void __global__ rk_substep_1(float2* ux,float2* uy,float2* uz,float2* u_w
 	kk=k1*k1+k2*k2+k3*k3;
 	lap=-kk/Re;
 	
-	if(kk<kf*kf){lap=lap+Cf;}
+	if(kk>=KFLOW2 && kk<kf*kf){lap=lap+Cf;}
 
 	s_prod.x=r1.x*k1+r2.x*k2+r3.x*k3;
 	s_prod.y=r1.y*k1+r2.y*k2+r3.y*k3;
@@ -171,7 +171,7 @@ static void __global__ rk_substep_05(float2* ux,float2* uy,float2* uz,float2* u_
 	kk=k1*k1+k2*k2+k3*k3;
 	lap=-kk/Re;
 	
-	if(kk<kf*kf){lap=lap+Cf;}
+	if(kk>=KFLOW2 && kk<kf*kf){lap=lap+Cf;}
 
 	// u_w=dt*(u+gamma(i)*R
 		

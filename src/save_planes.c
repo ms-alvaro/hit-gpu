@@ -276,8 +276,9 @@ static void validate_sweep(float2* component)
     printf("\n=== SWEEP VALIDATION (phase extraction vs backward FFT) ===\n");
     for (int t = 0; t < 5; t++) {
         int ix = tests[t];
-        double s = (double)ix / (double)N;
-        sum_over_kx_cpu(component, s);
+        double s = (double)ix / (double)NX;   /* grid point ix sits at x_s/Lx = ix/NX
+                                                 (NX, not N, for the LONGX>1 box) */
+        sum_over_kx_gpu(component, sum_slab_gpu, s, NXSIZE);
         cufftExecC2R(plan_2d_c2r, (cufftComplex*)sum_slab_gpu,
                      (cufftReal*)sum_slab_gpu);
         CHECK_CUDART(cudaDeviceSynchronize());
@@ -327,8 +328,8 @@ void save_plane_step(vectorField u, float time)
     validate_sweep(u.x);
 
     for (int c = 0; c < 3; c++) {
-        /* 1) Sum over kx (phase-weighted at x_s) to get (ky, kz) slab */
-        sum_over_kx_cpu(comps[c], s_frac);
+        /* 1) Sum over kx (phase-weighted at x_s) to get (ky, kz) slab — on GPU */
+        sum_over_kx_gpu(comps[c], sum_slab_gpu, s_frac, NXSIZE);
 
         /* 2) 2D C2R inverse: (ky, kz) -> (y, z).
               Input:  sum_slab_gpu, NY * NZ complex values

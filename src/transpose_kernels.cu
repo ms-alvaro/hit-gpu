@@ -399,7 +399,7 @@ static void __global__ rk_step_1(float2* ux,float2* uy,float2* uz,float2* u_wx,f
 	kk=k1*k1+k2*k2+k3*k3;
 	lap=-kk/Re;
 	
-	if(kk<kf*kf){lap=lap+Cf;}
+	if(kk>=KFLOW2 && kk<kf*kf){lap=lap+Cf;}
 	
 	int h=i*NY*NZ+j*NZ+k;
 	
@@ -504,7 +504,7 @@ static void __global__ rk_step_2(float2* ux,float2* uy,float2* uz,float2* u_wx,f
 	kk=k1*k1+k2*k2+k3*k3;
 
 	lap=-kk/Re;
-	if(kk<kf*kf){lap=lap+Cf;}	
+	if(kk>=KFLOW2 && kk<kf*kf){lap=lap+Cf;}	
 
 
 	int h=i*NY*NZ+j*NZ+k;

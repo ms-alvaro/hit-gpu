@@ -314,7 +314,7 @@ static __global__ void calcEnergyShellKernel2(float2* ux,float2* uy,float2* uz,f
     float2 u1,u2,u3;
     float E1=0.0f,E2=0.0f,E3=0.0f;
 
-    if(kk<ks*ks){
+    if(kk>=KFLOW2 && kk<ks*ks){
       u1=ux[h];
       u2=uy[h];
       u3=uz[h];
@@ -381,7 +381,7 @@ static __global__ void calcEnergyShellKernel(float2* ux,float2* uy,float2* uz,fl
 
 	float e1,e2;
 
-	if(kk<ks*ks){		
+	if(kk>=KFLOW2 && kk<ks*ks){		
 
 	// Read {u1,u2,u3}	
 	
