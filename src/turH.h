@@ -136,6 +136,16 @@ typedef struct case_config_t {
 // LONGX=1 reproduces the original cubic box exactly.
 #define LONGX 4
 #define KXFAC (1.0f/(float)LONGX)
+// Forcing low-wavenumber floor (squared).  The negative-viscosity forcing band
+// is KFLOW2 <= |k|^2 < kf*kf.  In the LONGX>1 box the streamwise spacing is
+// KXFAC so modes kx = m/LONGX < 1 (m=1..LONGX-1, e.g. 0.25,0.5,0.75) appear
+// that DON'T exist in the cube; with ~zero viscous drain they would be pumped
+// and condense into the lowest box mode (giant kx=1/LONGX spike -> spurious
+// streamwise periodicity / strong anisotropy).  Flooring at |k|>=1 forces the
+// SAME lowest physical wavenumber as the cube (|k|=1) and leaves those sub-
+// fundamental box modes unforced.  LONGX=1 (cube): |k|<1 holds only k=0, so
+// this floor is a no-op and the original cubic behaviour is reproduced exactly.
+#define KFLOW2 (1.0f)
 // Total real-space grid size = FFT normalization. Real z-size is 2*NZ-2 = N.
 // For LONGX=1 this is N*N*N (original cubic).
 #define NTOT ((float)NX*(float)NY*(float)N)
@@ -331,6 +341,7 @@ extern void routineCheck(vectorField t);
 void save_planes_init(const char* filename, float sweep_period);
 void save_plane_step(vectorField u, float time);
 void save_planes_finalize(void);
+void sum_over_kx_gpu(float2* comp_gpu, float2* slab_gpu, double s_frac, int NXS);
 
 //Statistics Kernels
 extern void calc_E_kernel( vectorField u, float2* t);
