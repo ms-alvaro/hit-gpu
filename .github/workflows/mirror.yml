@@ -1,0 +1,33 @@
+name: Push to lab mirror
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  delete:
+  workflow_dispatch:
+
+concurrency:
+  group: mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.repository == 'ms-alvaro/hit-gpu'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Mirror to ALD-Lab
+        run: |
+          if [ -z "${MIRROR_TOKEN}" ]; then
+            echo "::notice::MIRROR_TOKEN secret not set, skipping the ALD-Lab mirror"
+            exit 0
+          fi
+          git clone --mirror https://x-access-token:${GH_TOKEN}@github.com/ms-alvaro/hit-gpu.git repo
+          cd repo
+          git for-each-ref --format='delete %(refname)' refs/pull | git update-ref --stdin
+          git push --mirror https://x-access-token:${MIRROR_TOKEN}@github.com/ALD-Lab/hit-gpu.git
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
